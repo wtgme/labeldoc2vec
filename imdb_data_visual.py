@@ -13,6 +13,7 @@ from gensim.test.test_doc2vec import ConcatenatedDoc2Vec
 from gensim.models.labeldoc2vec import LabelDoc2Vec, LabeledTaggedDocument
 import data_util
 import logging
+import visualize
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 window = 5
@@ -35,23 +36,26 @@ def doc_vect(alldocs):
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
-                # PV-DM w/concatenation - window=5 (both sides) approximates paper's 10-word total window size
-                Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
                 # PV-DBOW
-                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
-                # PV-DM w/average
-                Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores)
                     ]
 
     models_by_name = OrderedDict((str(model), model) for model in simple_models)
-    models_by_name['dbow+dmm'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[2]])
-    models_by_name['dbow+dmc'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[0]])
 
     for name, model in models_by_name.items():
         print name
-        train_targets, train_regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
-        data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
+        pws = model.most_similar(positive=['good'], topn=5)
+        nws = model.most_similar(positive=['bad'], topn=5)
+        words = ['good', 'bad']
+        for ws in pws:
+            words.append(ws[0])
+        for ws in nws:
+            words.append(ws[0])
+        vectors = [model[word] for word in words]
+        visualize.draw_words(vectors, words, True, False, r'Doc2Vec')
+
+
+
 
 
 def class_vect(alldocs):
@@ -70,23 +74,23 @@ def class_vect(alldocs):
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
-                # PV-DM w/concatenation - window=5 (both sides) approximates paper's 10-word total window size
-                Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
                 # PV-DBOW
-                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
-                # PV-DM w/average
-                Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores)
                     ]
 
     models_by_name = OrderedDict((str(model), model) for model in simple_models)
-    models_by_name['dbow+dmm'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[2]])
-    models_by_name['dbow+dmc'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[0]])
 
     for name, model in models_by_name.items():
         print name
-        train_targets, train_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
-        data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
+        pws = model.most_similar(positive=['good'], topn=5)
+        nws = model.most_similar(positive=['bad'], topn=5)
+        words = ['good', 'bad']
+        for ws in pws:
+            words.append(ws[0])
+        for ws in nws:
+            words.append(ws[0])
+        vectors = [model[word] for word in words]
+        visualize.draw_words(vectors, words, True, False, r'Class2Vec')
 
 
 def labeldoc_vect(alldocs):
@@ -111,23 +115,23 @@ def labeldoc_vect(alldocs):
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
-                # PV-DM w/concatenation - window=5 (both sides) approximates paper's 10-word total window size
-                LabelDoc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
                 # PV-DBOW
-                LabelDoc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
-                # PV-DM w/average
-                LabelDoc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores)
                     ]
 
     models_by_name = OrderedDict((str(model), model) for model in simple_models)
-    models_by_name['dbow+dmm'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[2]])
-    models_by_name['dbow+dmc'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[0]])
 
     for name, model in models_by_name.items():
         print name
-        train_targets, train_regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
-        data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
+        pws = model.most_similar(positive=['good'], topn=5)
+        nws = model.most_similar(positive=['bad'], topn=5)
+        words = ['good', 'bad']
+        for ws in pws:
+            words.append(ws[0])
+        for ws in nws:
+            words.append(ws[0])
+        vectors = [model[word] for word in words]
+        visualize.draw_words(vectors, words, True, False, r'Label2Vec')
 
 if __name__ == '__main__':
     data = data_util.get_imdb_data()
