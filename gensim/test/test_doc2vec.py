@@ -336,6 +336,9 @@ class ConcatenatedDoc2Vec(object):
     def infer_vector(self, document, alpha=0.1, min_alpha=0.0001, steps=5):
         return np.concatenate([model.infer_vector(document, alpha, min_alpha, steps) for model in self.models])
 
+    def infer_vector_label(self, document, alpha=0.1, min_alpha=0.0001, steps=5):
+        return np.concatenate([model.infer_vector_label(document, alpha, min_alpha, steps) for model in self.models])
+
     def train(self, ignored):
         pass  # train subcomponents individually
 

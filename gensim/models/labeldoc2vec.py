@@ -781,7 +781,7 @@ class LabelDoc2Vec(Word2Vec):
         """Return the number of words in a given job."""
         return sum(len(sentence.words) for sentence in job)
 
-    def infer_vector(self, doc_words, alpha=0.1, min_alpha=0.0001, steps=5):
+    def infer_vector_label(self, doc_words, alpha=0.1, min_alpha=0.0001, steps=5):
         """
         Infer a vector for given post-bulk training document.
 

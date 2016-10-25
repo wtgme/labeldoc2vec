@@ -6,29 +6,48 @@ Created on 9:33 PM, 10/14/16
 """
 
 import matplotlib.pyplot as plt
+import matplotlib
 from sklearn.manifold import TSNE
-from scipy.spatial import distance
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+# from scipy.spatial import distance
+
 
 def draw_words(vectors, words, alternate=True, arrows=True, title=''):
+    # sims = cosine_similarity(vectors)
+    # # print sims.shape
+    # sims[sims>1.0] = 1.0
+    # sims = np.matrix(sims)
+    #
+    # print sims
+    # dis = 1. - sims
+    # # print dis
+    # tsne = TSNE(random_state=0, metric='precomputed')
+    # vectors2d = tsne.fit_transform(dis)
+
     tsne = TSNE(n_components=2, init='pca', random_state=0)
     vectors2d = tsne.fit_transform(vectors)
+    word_list = list(set(words))
+    nCols = len(word_list)
+    colors = matplotlib.cm.rainbow(np.linspace(0, 1, nCols))
 
     first = True # color alternation to divide given groups
+
     for point, word in zip(vectors2d, words):
         # plot points
-        plt.scatter(point[0], point[1], c='r' if first else 'g')
+        plt.scatter(point[0], point[1], c=colors[word_list.index(word)])
         # plot word annotations
-        plt.annotate(
-            word,
-            xy = (point[0], point[1]),
-            xytext = (-10, -10) if first else (10, -10),
-            textcoords = 'offset points',
-            ha = 'right' if first else 'left',
-            va = 'bottom',
-            size = "x-large",
-            # arrowprops=dict(arrowstyle="->")
-        )
-        first = not first if alternate else first
+        # plt.annotate(
+        #     word,
+        #     xy = (point[0], point[1]),
+        #     xytext = (-10, -10) if first else (10, -10),
+        #     textcoords = 'offset points',
+        #     ha = 'right' if first else 'left',
+        #     va = 'bottom',
+        #     size = "x-large",
+        #     # arrowprops=dict(arrowstyle="->")
+        # )
+        # first = not first if alternate else first
 
     # draw arrows
     if arrows:

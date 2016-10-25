@@ -24,15 +24,11 @@ def doc_vect(alldocs):
     print 'Doc2Vec with lineNO as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
-    for doc in train_docs:
+    for doc in alldocs:
         sentence = TaggedDocument(doc.words, doc.tags)
         documents.append(sentence)
-    # for doc in unlable_docs:
-    #     sentence = TaggedDocument(doc.words, doc.tags)
-    #     documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
@@ -44,37 +40,19 @@ def doc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        # pws = model.most_similar(positive=['good'], topn=5)
-        # print pws
-        # nws = model.most_similar(positive=['bad'], topn=5)
-        # print nws
-        # print 'Good and Bad Similarity:'
-        # print model.similarity('good', 'bad')
-        words = ['good', 'bad', 'best', 'worst', 'nice', 'nasty', 'exciting', 'boring', 'wonderful', 'awful']
-        # for ws in pws:
-        #     words.append(ws[0])
-        # for ws in nws:
-        #     words.append(ws[0])
-        vectors = [model.infer_vector(word) for word in words]
-        visualize.draw_words(vectors, words, True, False, r'Doc2Vec')
-
-
-
+        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
+        visualize.draw_words(regressors, targets, True, False, r'Doc2Vec')
 
 
 def class_vect(alldocs):
     print 'Doc2Vec with ClassID as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
-    for doc in train_docs:
+    for doc in alldocs:
         sentence = TaggedDocument(doc.words, ['l'+str(doc.sentiment)])
         documents.append(sentence)
-    # for doc in unlable_docs:
-    #     sentence = TaggedDocument(doc.words, [])
-    #     documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
@@ -86,40 +64,22 @@ def class_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        # pws = model.most_similar(positive=['good'], topn=5)
-        # print pws
-        # nws = model.most_similar(positive=['bad'], topn=5)
-        # print nws
-        # print 'Good and Bad Similarity:'
-        # print model.similarity('good', 'bad')
-        words = ['good', 'bad', 'best', 'worst', 'nice', 'nasty', 'exciting', 'boring', 'wonderful', 'awful']
-        # for ws in pws:
-        #     words.append(ws[0])
-        # for ws in nws:
-        #     words.append(ws[0])
-        vectors = [model.infer_vector(word) for word in words]
-        visualize.draw_words(vectors, words, True, False, r'Class2Vec')
+        targets, regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in alldocs])
+        visualize.draw_words(regressors, targets, True, False, r'Class2Vec')
 
 
 def labeldoc_vect(alldocs):
     print 'LabelDoc2Vec with lineNO as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
-    for doc in train_docs:
+    for doc in alldocs:
         slable = []
         if doc.split == 'train':
             slable = ['s'+str(doc.sentiment)]
         sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
         documents.append(sentence)
-    # for doc in unlable_docs:
-    #     slable = []
-    #     if doc.split == 'train':
-    #         slable = ['s'+str(doc.sentiment)]
-    #     sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
-    #     documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
@@ -131,22 +91,11 @@ def labeldoc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        # pws = model.most_similar(positive=['good'], topn=5)
-        # print pws
-        # nws = model.most_similar(positive=['bad'], topn=5)
-        # print nws
-        # print 'Good and Bad Similarity:'
-        # print model.similarity('good', 'bad')
-        words = ['good', 'bad', 'best', 'worst', 'nice', 'nasty', 'exciting', 'boring', 'wonderful', 'awful']
-        # for ws in pws:
-        #     words.append(ws[0])
-        # for ws in nws:
-        #     words.append(ws[0])
-        vectors = [model.infer_vector(word) for word in words]
-        visualize.draw_words(vectors, words, True, False, r'Label2Vec')
+        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
+        visualize.draw_words(regressors, targets, True, False, r'Label2Vec')
 
 if __name__ == '__main__':
-    data = data_util.get_imdb_data()
+    data = data_util.get_ng_data()
     doc_vect(data)
     class_vect(data)
     labeldoc_vect(data)

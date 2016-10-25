@@ -11,6 +11,7 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 from sklearn.svm import SVC
 from collections import namedtuple
+from sklearn.metrics.pairwise import cosine_similarity
 
 # def classifier_cv(X, y, K=5):
 #     skf = StratifiedKFold(n_splits=K)
@@ -114,8 +115,16 @@ def get_ng_data():
             alldocs.append(SentimentDocument(words, tags, split, sentiment))
     return alldocs
 
+
 def get_rcv():
     from sklearn.datasets import fetch_rcv1
     rcv1 = fetch_rcv1()
     for doc in rcv1.data:
         print doc
+
+
+def assortative(vectors, labels):
+    sims = cosine_similarity(vectors)
+    sims[sims>1.0] = 1.0
+    print sims
+

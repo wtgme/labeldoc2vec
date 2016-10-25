@@ -16,22 +16,22 @@ import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 window = 5
-size = 100
-iter = 20
+size = 200
+iter = 5
 
 def doc_vect(alldocs):
     print 'Doc2Vec with lineNO as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
+    # unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
         sentence = TaggedDocument(doc.words, doc.tags)
         documents.append(sentence)
-    for doc in unlable_docs:
-        sentence = TaggedDocument(doc.words, doc.tags)
-        documents.append(sentence)
+    # for doc in unlable_docs:
+    #     sentence = TaggedDocument(doc.words, doc.tags)
+    #     documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
@@ -58,15 +58,15 @@ def class_vect(alldocs):
     print 'Doc2Vec with ClassID as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
+    # unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
         sentence = TaggedDocument(doc.words, ['l'+str(doc.sentiment)])
         documents.append(sentence)
-    for doc in unlable_docs:
-        sentence = TaggedDocument(doc.words, [])
-        documents.append(sentence)
+    # for doc in unlable_docs:
+    #     sentence = TaggedDocument(doc.words, [])
+    #     documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
@@ -93,7 +93,7 @@ def labeldoc_vect(alldocs):
     print 'LabelDoc2Vec with lineNO as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
+    # unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
@@ -102,12 +102,12 @@ def labeldoc_vect(alldocs):
             slable = ['s'+str(doc.sentiment)]
         sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
         documents.append(sentence)
-    for doc in unlable_docs:
-        slable = []
-        if doc.split == 'train':
-            slable = ['s'+str(doc.sentiment)]
-        sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
-        documents.append(sentence)
+    # for doc in unlable_docs:
+    #     slable = []
+    #     if doc.split == 'train':
+    #         slable = ['s'+str(doc.sentiment)]
+    #     sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
+    #     documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
     simple_models = [
@@ -126,11 +126,11 @@ def labeldoc_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         train_targets, train_regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
+        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector_label(doc.words)) for doc in test_docs])
         data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
 
 if __name__ == '__main__':
-    data = data_util.get_imdb_data()
+    data = data_util.get_ng_data()
     doc_vect(data)
     class_vect(data)
     labeldoc_vect(data)

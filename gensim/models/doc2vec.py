@@ -715,6 +715,8 @@ class Doc2Vec(Word2Vec):
         doctag_vectors[0] = self.seeded_vector(' '.join(doc_words))
         doctag_locks = ones(1, dtype=REAL)
         doctag_indexes = [0]
+        # print '-----------------Vector-------------------------------'
+        # print doctag_vectors[0]
 
         work = zeros(self.layer1_size, dtype=REAL)
         if not self.sg:
@@ -734,7 +736,7 @@ class Doc2Vec(Word2Vec):
                                   learn_words=False, learn_hidden=False,
                                   doctag_vectors=doctag_vectors, doctag_locks=doctag_locks)
             alpha = ((alpha - min_alpha) / (steps - i)) + min_alpha
-
+        # print doctag_vectors[0]
         return doctag_vectors[0]
 
     def estimate_memory(self, vocab_size=None, report=None):
