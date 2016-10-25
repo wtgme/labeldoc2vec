@@ -62,7 +62,7 @@ def class_vect(alldocs):
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
-        sentence = TaggedDocument(doc.words, ['l'+str(doc.sentiment)])
+        sentence = TaggedDocument(doc.words, [str(doc.sentiment)])
         documents.append(sentence)
     # for doc in unlable_docs:
     #     sentence = TaggedDocument(doc.words, [])
@@ -84,9 +84,10 @@ def class_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        train_targets, train_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in train_docs])
+        # train_targets, train_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in train_docs])
         test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
-        data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
+        # data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
+        data_util.model_similar(model, test_regressors, test_targets)
 
 
 def labeldoc_vect(alldocs):
@@ -131,7 +132,7 @@ def labeldoc_vect(alldocs):
 
 if __name__ == '__main__':
     data = data_util.get_ng_data()
-    doc_vect(data)
+    # doc_vect(data)
     class_vect(data)
-    labeldoc_vect(data)
+    # labeldoc_vect(data)
 

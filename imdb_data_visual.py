@@ -96,7 +96,7 @@ def labeldoc_vect(alldocs):
 
 if __name__ == '__main__':
     data = data_util.get_ng_data()
-    doc_vect(data)
+    # doc_vect(data)
     class_vect(data)
-    labeldoc_vect(data)
+    # labeldoc_vect(data)
 

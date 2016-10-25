@@ -6,7 +6,7 @@ Created on 9:33 PM, 10/14/16
 """
 
 import matplotlib.pyplot as plt
-import matplotlib
+import matplotlib.cm as cm
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
@@ -29,7 +29,7 @@ def draw_words(vectors, words, alternate=True, arrows=True, title=''):
     vectors2d = tsne.fit_transform(vectors)
     word_list = list(set(words))
     nCols = len(word_list)
-    colors = matplotlib.cm.rainbow(np.linspace(0, 1, nCols))
+    colors = cm.rainbow(np.linspace(0, 1, nCols))
 
     first = True # color alternation to divide given groups
 
@@ -69,8 +69,8 @@ def draw_words(vectors, words, alternate=True, arrows=True, title=''):
             )
 
     # draw diagram title
-    if title:
-        plt.title(title)
+    # if title:
+    #     plt.title(title)
 
     plt.savefig(title+'.pdf')
     plt.clf()

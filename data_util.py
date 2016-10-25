@@ -37,6 +37,15 @@ def logit(X_train, y_train, X_test, y_test):
     return score
 
 
+def model_similar(model, X_test, y_test):
+    y_lin = []
+    for doc in X_test:
+        y_lin.append(int(model.docvecs.most_similar(positive=[doc], topn=1)[0][0]))
+    score = accuracy_score(y_lin, y_test)
+    print "Logit Accuracy: %0.4f" % (score)
+    return score
+
+
 def svm(X_train, y_train, X_test, y_test):
     # logistic = linear_model.LogisticRegression(multi_class='multinomial', solver='newton-cg', n_jobs=multiprocessing.cpu_count())
     svc_lin = SVC(kernel='linear', class_weight='balanced')
@@ -123,8 +132,10 @@ def get_rcv():
         print doc
 
 
-def assortative(vectors, labels):
+def sim_ratio(vectors, labels):
     sims = cosine_similarity(vectors)
     sims[sims>1.0] = 1.0
-    print sims
+    C = list(set(labels))
+    K = len(C)
+
 
