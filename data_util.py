@@ -134,8 +134,18 @@ def get_rcv():
 
 def sim_ratio(vectors, labels):
     sims = cosine_similarity(vectors)
-    sims[sims>1.0] = 1.0
-    C = list(set(labels))
-    K = len(C)
+    size = len(vectors)
+    sim_inter, sim_intra, count_inter, count_intra = 0.0, 0.0, 0.0, 0.0
+    for i in xrange(size):
+        for j in xrange(i, size):
+            if labels[i] == labels[j]:
+                sim_intra += sims[i][j]
+                count_intra += 1
+            else:
+                sim_inter += sims[i][j]
+                count_inter += 1
+    return (sim_intra/count_intra)/(sim_inter/count_inter)
+
+
 
 

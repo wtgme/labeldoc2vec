@@ -17,8 +17,9 @@ import visualize
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 window = 5
-size = 100
+size = 400
 iter = 5
+
 
 def doc_vect(alldocs):
     print 'Doc2Vec with lineNO as ID'
@@ -42,6 +43,7 @@ def doc_vect(alldocs):
         print name
         targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
         visualize.draw_words(regressors, targets, True, False, r'Doc2Vec')
+        print data_util.sim_ratio(regressors, targets)
 
 
 def class_vect(alldocs):
@@ -66,6 +68,7 @@ def class_vect(alldocs):
         print name
         targets, regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in alldocs])
         visualize.draw_words(regressors, targets, True, False, r'Class2Vec')
+        print data_util.sim_ratio(regressors, targets)
 
 
 def labeldoc_vect(alldocs):
@@ -93,10 +96,11 @@ def labeldoc_vect(alldocs):
         print name
         targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
         visualize.draw_words(regressors, targets, True, False, r'Label2Vec')
+        print data_util.sim_ratio(regressors, targets)
 
 if __name__ == '__main__':
     data = data_util.get_ng_data()
-    # doc_vect(data)
+    doc_vect(data)
     class_vect(data)
-    # labeldoc_vect(data)
+    labeldoc_vect(data)
 
