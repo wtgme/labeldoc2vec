@@ -147,7 +147,7 @@ def sim_ratio(vectors, labels):
     sim_inter_avg = sim_inter/count_inter
     sim_intra_avg = sim_intra/count_intra
     ratio = sim_intra_avg/sim_inter_avg
-    print 'Intra_similarity: %.3f \t Inter_simiarlty: %.2f \t Ratio: %.3f' % sim_intra_avg, sim_inter_avg, ratio
+    print 'Intra_similarity: %.3f \t Inter_simiarlty: %.3f \t Ratio: %.3f' %(sim_intra_avg, sim_inter_avg, ratio)
     return ratio
 
 
