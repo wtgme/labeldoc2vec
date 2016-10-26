@@ -27,7 +27,7 @@ def doc_vect(alldocs):
     test_docs = [doc for doc in alldocs if doc.split == 'test']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
-    for doc in alldocs:
+    for doc in train_docs+test_docs:
         sentence = TaggedDocument(doc.words, doc.tags)
         documents.append(sentence)
     print len(documents)
@@ -41,7 +41,7 @@ def doc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
+        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
         # visualize.draw_words(regressors, targets, True, False, r'Doc2Vec')
         print data_util.sim_ratio(regressors, targets)
 
@@ -52,7 +52,7 @@ def class_vect(alldocs):
     test_docs = [doc for doc in alldocs if doc.split == 'test']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
-    for doc in alldocs:
+    for doc in train_docs+test_docs:
         sentence = TaggedDocument(doc.words, ['l'+str(doc.sentiment)])
         documents.append(sentence)
     print len(documents)
@@ -66,7 +66,7 @@ def class_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        targets, regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in alldocs])
+        targets, regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in train_docs+test_docs])
         # visualize.draw_words(regressors, targets, True, False, r'Class2Vec')
         print data_util.sim_ratio(regressors, targets)
 
@@ -77,7 +77,7 @@ def labeldoc_vect(alldocs):
     test_docs = [doc for doc in alldocs if doc.split == 'test']
     print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
-    for doc in alldocs:
+    for doc in train_docs+test_docs:
         slable = []
         if doc.split == 'train':
             slable = ['s'+str(doc.sentiment)]
@@ -94,12 +94,12 @@ def labeldoc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
+        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
         # visualize.draw_words(regressors, targets, True, False, r'Label2Vec')
         print data_util.sim_ratio(regressors, targets)
 
 if __name__ == '__main__':
-    data = data_util.get_ng_data()
+    data = data_util.get_imdb_data()
     doc_vect(data)
     class_vect(data)
     labeldoc_vect(data)
