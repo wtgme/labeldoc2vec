@@ -42,7 +42,7 @@ def doc_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
-        visualize.draw_words(regressors, targets, True, False, r'Doc2Vec')
+        # visualize.draw_words(regressors, targets, True, False, r'Doc2Vec')
         print data_util.sim_ratio(regressors, targets)
 
 
@@ -67,7 +67,7 @@ def class_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in alldocs])
-        visualize.draw_words(regressors, targets, True, False, r'Class2Vec')
+        # visualize.draw_words(regressors, targets, True, False, r'Class2Vec')
         print data_util.sim_ratio(regressors, targets)
 
 
@@ -95,7 +95,7 @@ def labeldoc_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in alldocs])
-        visualize.draw_words(regressors, targets, True, False, r'Label2Vec')
+        # visualize.draw_words(regressors, targets, True, False, r'Label2Vec')
         print data_util.sim_ratio(regressors, targets)
 
 if __name__ == '__main__':
