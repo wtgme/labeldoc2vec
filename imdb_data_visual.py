@@ -42,7 +42,7 @@ def doc_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
-        visualize.draw_words(regressors, targets, True, False, r'Doc2Vecimdb')
+        visualize.draw_words(regressors, targets, True, False, r'Doc2VecRe')
         print data_util.sim_ratio(regressors, targets)
 
 
@@ -53,7 +53,7 @@ def class_vect(alldocs):
     print('%d docs: %d train-label, %d test-label' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs+test_docs:
-        sentence = TaggedDocument(doc.words, ['l'+str(doc.label)])
+        sentence = TaggedDocument(doc.words, [doc.label])
         documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
@@ -67,7 +67,7 @@ def class_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs+test_docs])
-        visualize.draw_words(regressors, targets, True, False, r'Class2Vecimdb')
+        visualize.draw_words(regressors, targets, True, False, r'Class2VecRe')
         print data_util.sim_ratio(regressors, targets)
 
 
@@ -80,7 +80,7 @@ def labeldoc_vect(alldocs):
     for doc in train_docs+test_docs:
         slable = []
         if doc.split == 'train':
-            slable = ['s'+str(doc.label)]
+            slable = [doc.label]
         sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
         documents.append(sentence)
     print len(documents)
@@ -95,7 +95,7 @@ def labeldoc_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
-        visualize.draw_words(regressors, targets, True, False, r'Label2Vecimdb')
+        visualize.draw_words(regressors, targets, True, False, r'Label2VecRe')
         print data_util.sim_ratio(regressors, targets)
 
 if __name__ == '__main__':

@@ -16,8 +16,9 @@ import logging
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 window = 5
-size = 200
+size = 400
 iter = 5
+
 
 def doc_vect(alldocs):
     print 'Doc2Vec with lineNO as ID'
@@ -131,7 +132,7 @@ def labeldoc_vect(alldocs):
         data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
 
 if __name__ == '__main__':
-    data = data_util.get_ng_data()
+    data = data_util.get_reuters_data()
     # doc_vect(data)
     class_vect(data)
     # labeldoc_vect(data)
