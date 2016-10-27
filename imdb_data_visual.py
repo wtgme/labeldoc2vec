@@ -25,7 +25,7 @@ def doc_vect(alldocs):
     print 'Doc2Vec with lineNO as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
+    print('%d docs: %d train-label, %d test-label' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs+test_docs:
         sentence = TaggedDocument(doc.words, doc.tags)
@@ -41,8 +41,8 @@ def doc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
-        # visualize.draw_words(regressors, targets, True, False, r'Doc2Vec')
+        targets, regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
+        visualize.draw_words(regressors, targets, True, False, r'Doc2Vecimdb')
         print data_util.sim_ratio(regressors, targets)
 
 
@@ -50,10 +50,10 @@ def class_vect(alldocs):
     print 'Doc2Vec with ClassID as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
+    print('%d docs: %d train-label, %d test-label' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs+test_docs:
-        sentence = TaggedDocument(doc.words, ['l'+str(doc.sentiment)])
+        sentence = TaggedDocument(doc.words, ['l'+str(doc.label)])
         documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
@@ -66,8 +66,8 @@ def class_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        targets, regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in train_docs+test_docs])
-        # visualize.draw_words(regressors, targets, True, False, r'Class2Vec')
+        targets, regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs+test_docs])
+        visualize.draw_words(regressors, targets, True, False, r'Class2Vecimdb')
         print data_util.sim_ratio(regressors, targets)
 
 
@@ -75,12 +75,12 @@ def labeldoc_vect(alldocs):
     print 'LabelDoc2Vec with lineNO as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
+    print('%d docs: %d train-label, %d test-label' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs+test_docs:
         slable = []
         if doc.split == 'train':
-            slable = ['s'+str(doc.sentiment)]
+            slable = ['s'+str(doc.label)]
         sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
         documents.append(sentence)
     print len(documents)
@@ -94,8 +94,8 @@ def labeldoc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        targets, regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
-        # visualize.draw_words(regressors, targets, True, False, r'Label2Vec')
+        targets, regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
+        visualize.draw_words(regressors, targets, True, False, r'Label2Vecimdb')
         print data_util.sim_ratio(regressors, targets)
 
 if __name__ == '__main__':

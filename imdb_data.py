@@ -24,7 +24,7 @@ def doc_vect(alldocs):
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
     # unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
-    print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
+    print('%d docs: %d train-label, %d test-label' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
         sentence = TaggedDocument(doc.words, doc.tags)
@@ -49,8 +49,8 @@ def doc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        train_targets, train_regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
+        train_targets, train_regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs])
+        test_targets, test_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in test_docs])
         data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
 
 
@@ -59,10 +59,10 @@ def class_vect(alldocs):
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
     # unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
-    print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
+    print('%d docs: %d train-label, %d test-label' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
-        sentence = TaggedDocument(doc.words, [str(doc.sentiment)])
+        sentence = TaggedDocument(doc.words, [doc.label])
         documents.append(sentence)
     # for doc in unlable_docs:
     #     sentence = TaggedDocument(doc.words, [])
@@ -84,10 +84,10 @@ def class_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        # train_targets, train_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
-        # data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
-        data_util.model_similar(model, test_regressors, test_targets)
+        train_targets, train_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs])
+        test_targets, test_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in test_docs])
+        data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
+        # data_util.model_similar(model, test_regressors, test_targets)
 
 
 def labeldoc_vect(alldocs):
@@ -95,18 +95,18 @@ def labeldoc_vect(alldocs):
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
     # unlable_docs = [doc for doc in alldocs if doc.split == 'extra']
-    print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
+    print('%d docs: %d train, %d test' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
         slable = []
         if doc.split == 'train':
-            slable = ['s'+str(doc.sentiment)]
+            slable = ['s'+str(doc.label)]
         sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
         documents.append(sentence)
     # for doc in unlable_docs:
     #     slable = []
     #     if doc.split == 'train':
-    #         slable = ['s'+str(doc.sentiment)]
+    #         slable = ['s'+str(doc.label)]
     #     sentence = LabeledTaggedDocument(doc.words, doc.tags, slable)
     #     documents.append(sentence)
     print len(documents)
@@ -126,8 +126,8 @@ def labeldoc_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        train_targets, train_regressors = zip(*[(doc.sentiment, model.docvecs[doc.tags[0]]) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector_label(doc.words)) for doc in test_docs])
+        train_targets, train_regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs])
+        test_targets, test_regressors = zip(*[(doc.label, model.infer_vector_label(doc.words)) for doc in test_docs])
         data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
 
 if __name__ == '__main__':

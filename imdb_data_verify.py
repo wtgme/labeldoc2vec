@@ -23,10 +23,10 @@ def class_vect(alldocs):
     print 'Doc2Vec with ClassID as ID'
     train_docs = [doc for doc in alldocs if doc.split == 'train']
     test_docs = [doc for doc in alldocs if doc.split == 'test']
-    print('%d docs: %d train-sentiment, %d test-sentiment' % (len(alldocs), len(train_docs), len(test_docs)))
+    print('%d docs: %d train-label, %d test-label' % (len(alldocs), len(train_docs), len(test_docs)))
     documents = []
     for doc in train_docs:
-        sentence = TaggedDocument(doc.words, [str(doc.sentiment)])
+        sentence = TaggedDocument(doc.words, [str(doc.label)])
         documents.append(sentence)
     print len(documents)
     cores = multiprocessing.cpu_count()
@@ -45,8 +45,8 @@ def class_vect(alldocs):
 
     for name, model in models_by_name.items():
         print name
-        # train_targets, train_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in train_docs])
-        test_targets, test_regressors = zip(*[(doc.sentiment, model.infer_vector(doc.words)) for doc in test_docs])
+        # train_targets, train_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs])
+        test_targets, test_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in test_docs])
         # data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
         for test_doc in test_regressors:
             print model.docvecs.most_similar(positive=[test_doc], topn=1)
