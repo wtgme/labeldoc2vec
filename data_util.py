@@ -9,7 +9,7 @@ import multiprocessing
 from sklearn import linear_model
 from sklearn import metrics
 import numpy as np
-from sklearn.svm import SVC
+from sklearn import svm
 from collections import namedtuple
 from sklearn.metrics.pairwise import cosine_similarity
 import re
@@ -59,14 +59,20 @@ def model_similar(model, X_test, y_test):
     print_scores([], [], y_lin, y_test)
 
 
-def svm(X_train, y_train, X_test, y_test):
-    # logistic = linear_model.LogisticRegression(multi_class='multinomial', solver='newton-cg', n_jobs=multiprocessing.cpu_count())
-    svc_lin = SVC(kernel='linear', class_weight='balanced')
-    svc_lin.fit(X_train, y_train)
-    y_lin = svc_lin.predict(X_test)
-    y_tlin = svc_lin.predict(X_train)
-    print "SVM Performance"
-    print_scores(y_tlin, y_train, y_lin, y_test)
+def svm_class(X_train, y_train, X_test, y_test):
+    # # logistic = linear_model.LogisticRegression(multi_class='multinomial', solver='newton-cg', n_jobs=multiprocessing.cpu_count())
+    # svc_lin = SVC(kernel='linear', class_weight='balanced')
+    # svc_lin.fit(X_train, y_train)
+    # y_lin = svc_lin.predict(X_test)
+    # y_tlin = svc_lin.predict(X_train)
+    # print "SVM Performance"
+    # print_scores(y_tlin, y_train, y_lin, y_test)
+    print "Train: %dx%d. Test: %dx%d" %( tuple( X_train.shape + X_test.shape ) )
+    model = svm.LinearSVC(penalty='l1', dual=False)
+    model.fit( X_train, y_train )
+    pred_train_classes = model.predict( X_train )
+    pred_test_classes = model.predict( X_test )
+    print_scores(pred_train_classes, y_train, pred_test_classes, y_test)
 
 
 def pre_classify_text(X_train, y_train, X_test, y_test=None):
@@ -92,6 +98,7 @@ def pre_classify_text(X_train, y_train, X_test, y_test=None):
 
 def extract_words(doc, remove_url=True, remove_punc="utf-8", min_length=1):
     doc = doc.encode("utf-8").lower()
+    doc = doc.replace('<br />', ' ')
     if remove_punc:
         # ensure doc_u is in unicode
         if not isinstance(doc, unicode):
@@ -255,7 +262,7 @@ def sim_ratio(vectors, labels):
     sim_intra_avg = sim_intra/count_intra
     ratio = sim_intra_avg/sim_inter_avg
     print 'Intra_similarity: %.3f \t Inter_simiarlty: %.3f \t Ratio: %.3f' %(sim_intra_avg, sim_inter_avg, ratio)
-    return ratio
+
 
 
 

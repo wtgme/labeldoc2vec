@@ -42,8 +42,8 @@ def doc_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
-        visualize.draw_words(regressors, targets, True, False, r'Doc2VecRe')
-        print data_util.sim_ratio(regressors, targets)
+        visualize.draw_words(regressors, targets, True, False, r'Doc2VecNG')
+        data_util.sim_ratio(regressors, targets)
 
 
 def class_vect(alldocs):
@@ -67,8 +67,8 @@ def class_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs+test_docs])
-        visualize.draw_words(regressors, targets, True, False, r'Class2VecRe')
-        print data_util.sim_ratio(regressors, targets)
+        visualize.draw_words(regressors, targets, True, False, r'Class2VecNG')
+        data_util.sim_ratio(regressors, targets)
 
 
 def labeldoc_vect(alldocs):
@@ -95,11 +95,11 @@ def labeldoc_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.label, model.docvecs[doc.tags[0]]) for doc in train_docs+test_docs])
-        visualize.draw_words(regressors, targets, True, False, r'Label2VecRe')
-        print data_util.sim_ratio(regressors, targets)
+        visualize.draw_words(regressors, targets, True, False, r'Label2VecNG')
+        data_util.sim_ratio(regressors, targets)
 
 if __name__ == '__main__':
-    data = data_util.get_imdb_data()
+    data = data_util.get_ng_data()
     doc_vect(data)
     class_vect(data)
     labeldoc_vect(data)

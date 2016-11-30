@@ -3,11 +3,15 @@
 Created on 9:33 PM, 10/14/16
 
 @author: tw
+
+Ref: http://stackoverflow.com/questions/4700614/how-to-put-the-legend-out-of-the-plot
+http://matplotlib.org/users/legend_guide.html
 """
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from sklearn.manifold import TSNE
+import matplotlib.patches as mpatches
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 # from scipy.spatial import distance
@@ -67,12 +71,16 @@ def draw_words(vectors, words, alternate=True, arrows=True, title=''):
                 # width=0.01
                 shape='full', lw=1, length_includes_head=True, head_width=15
             )
+    handles_list = []
+    for c, word in zip(colors, word_list):
+        handles_list.append(mpatches.Patch(color=c, label=word))
 
+    lgd = plt.legend(handles=handles_list, loc='center left', bbox_to_anchor=(1, 0.5))
     # draw diagram title
     # if title:
     #     plt.title(title)
 
-    plt.savefig(title+'.pdf')
+    plt.savefig(title+'.pdf', bbox_extra_artists=(lgd,), bbox_inches='tight')
     plt.clf()
 
 '''# get trained model
@@ -81,3 +89,21 @@ model = gensim.models.Word2Vec.load_word2vec_format("model/SG-300-5-NS10-R50.mod
 draw_words(model, currency, True, True, True, -3, 3, -2, 2, r'$PCA\ Visualisierung:\ W\ddot{a}hrung$')
 draw_words(model, capital, True, True, True, -3, 3, -2, 2.2, r'$PCA\ Visualisierung:\ Hauptstadt$')
 draw_words(model, language, True, True, True, -3, 3, -2, 1.7, r'$PCA\ Visualisierung:\ Sprache$')'''
+
+if __name__ == '__main__':
+    word_list = range(10)
+    print word_list
+    nCols = len(word_list)
+    colors = cm.rainbow(np.linspace(0, 1, nCols))
+    print colors
+    handles_list = []
+    for c, word in zip(colors, word_list):
+        handles_list.append(mpatches.Patch(color=c, label=str(word)))
+
+    plt.legend(handles=handles_list)
+    plt.show()
+
+    # red_patch = mpatches.Patch(color='red', label='The red data')
+    # plt.legend(handles=[red_patch])
+    #
+    # plt.show()
