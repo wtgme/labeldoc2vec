@@ -32,7 +32,6 @@ def test():
 
 
 def test2():
-
     documents = []
     documents.append(TaggedDocument('this book is good , I like it'.split(), ['1']))
     documents.append(TaggedDocument('this book is bad , I hate it'.split(), ['2']))
@@ -40,7 +39,7 @@ def test2():
     documents.append(TaggedDocument('this room is bad , I hate it'.split(), ['4']))
     # model =Doc2Vec(documents, dm=0, size=100, window=3, negative=5, hs=1, sample=1e-4, iter=100, min_count=1, workers=1)
 
-    model = Doc2Vec(documents, dm=1, dm_concat=1, size=100, window=3, negative=3, hs=1, iter=20, min_count=1, workers=1)
+    model = Doc2Vec(documents, dm=0, dbow_words=1, size=50, window=5, negative=0, hs=1, iter=2000, min_count=0, workers=1)
     print('%s:\n %s' % (model, model.docvecs.most_similar('1')))
     # print model.docvecs['1']
     # v1 = model.infer_vector('this book is good'.split())
@@ -51,5 +50,25 @@ def test2():
     # # print model.similarity('book', 'room') - model.similarity('bad', 'good')
     # # print model.docvecs.similarity('1', '0')
 
-test()
+
+def test3():
+    documents = []
+    documents.append(TaggedDocument('this book is good , I like it'.split(), ['1']))
+    documents.append(TaggedDocument('this book is bad , I hate it'.split(), ['0']))
+    documents.append(TaggedDocument('this room is good , I like it'.split(), ['1']))
+    documents.append(TaggedDocument('this room is bad , I hate it'.split(), ['0']))
+    # model =Doc2Vec(documents, dm=0, size=100, window=3, negative=5, hs=1, sample=1e-4, iter=100, min_count=1, workers=1)
+
+    model = Doc2Vec(documents, dm=0, dbow_words=1, size=50, window=5, negative=0, hs=1, iter=2000, min_count=0, workers=1)
+    print('%s:\n %s' % (model, model.docvecs.most_similar('1')))
+    # print model.docvecs['1']
+    # v1 = model.infer_vector('this book is good'.split())
+    # v2 = model.infer_vector('this book is bad'.split())
+    # # print (1 - spatial.distance.cosine(v1, v2))
+    print 'Similiarity of Bad and Good: ', model.similarity('bad', 'good')
+    print 'Similiarity of Book and Room: ', model.similarity('book', 'room')
+    # # print model.similarity('book', 'room') - model.similarity('bad', 'good')
+    # # print model.docvecs.similarity('1', '0')
+
 test2()
+test3()

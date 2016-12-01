@@ -75,20 +75,22 @@ def class_vect(alldocs):
                 Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
                 # PV-DBOW
                 Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                # PV-DBOW Learing words
+                Doc2Vec(documents, dm=0, dbow_words=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
                 # PV-DM w/average
                 Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
                     ]
 
     models_by_name = OrderedDict((str(model), model) for model in simple_models)
-    models_by_name['dbow+dmm'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[2]])
-    models_by_name['dbow+dmc'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[0]])
+    # models_by_name['dbow+dmm'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[2]])
+    # models_by_name['dbow+dmc'] = ConcatenatedDoc2Vec([simple_models[1], simple_models[0]])
 
     for name, model in models_by_name.items():
         print name
         train_targets, train_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs])
         test_targets, test_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in test_docs])
         data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
-        # data_util.model_similar(model, test_regressors, test_targets)
+        data_util.model_similar(model, train_regressors, train_targets, test_regressors, test_targets)
 
 
 def labeldoc_vect(alldocs):

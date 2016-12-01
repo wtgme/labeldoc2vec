@@ -51,12 +51,15 @@ def logit(X_train, y_train, X_test, y_test):
     print_scores(y_tlin, y_train, y_lin, y_test)
 
 
-def model_similar(model, X_test, y_test):
+def model_similar(model, X_train, y_train, X_test, y_test):
     y_lin = []
+    y_tlin = []
+    for doc in X_train:
+        y_tlin.append(model.docvecs.most_similar(positive=[doc], topn=1)[0][0])
     for doc in X_test:
-        y_lin.append(int(model.docvecs.most_similar(positive=[doc], topn=1)[0][0]))
+        y_lin.append(model.docvecs.most_similar(positive=[doc], topn=1)[0][0])
     print "Similarity Performance"
-    print_scores([], [], y_lin, y_test)
+    print_scores(y_tlin, y_train, y_lin, y_test)
 
 
 def svm_class(X_train, y_train, X_test, y_test):
