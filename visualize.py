@@ -144,16 +144,16 @@ def draw_words_ano(vectors, words, alternate=True, arrows=True, title=''):
                 # width=0.01
                 shape='full', lw=1, length_includes_head=True, head_width=15
             )
-    handles_list = []
-    for c, word in zip(colors, word_list):
-        handles_list.append(mpatches.Patch(color=c, label=word))
-
-    lgd = plt.legend(handles=handles_list, loc='center left', bbox_to_anchor=(1, 0.5))
+    # handles_list = []
+    # for c, word in zip(colors, word_list):
+    #     handles_list.append(mpatches.Patch(color=c, label=word))
+    #
+    # lgd = plt.legend(handles=handles_list, loc='center left', bbox_to_anchor=(1, 0.5))
     # draw diagram title
     # if title:
     #     plt.title(title)
 
-    plt.savefig(title+'.pdf', bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(title+'.pdf')
     plt.clf()
 if __name__ == '__main__':
     word_list = range(10)
