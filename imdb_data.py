@@ -79,6 +79,16 @@ def class_vect(alldocs):
                 Doc2Vec(documents, dm=0, dbow_words=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
                 # PV-DM w/average
                 Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+
+                 # PV-DM w/concatenation - window=5 (both sides) approximates paper's 10-word total window size
+                Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                # PV-DBOW
+                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                # PV-DBOW Learing words
+                Doc2Vec(documents, dm=0, dbow_words=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                # PV-DM w/average
+                Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
+
                     ]
 
     models_by_name = OrderedDict((str(model), model) for model in simple_models)

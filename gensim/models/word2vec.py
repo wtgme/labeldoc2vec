@@ -266,7 +266,7 @@ def train_sg_pair(model, word, context_index, alpha, learn_vectors=True, learn_h
         fb = 1. / (1. + exp(-dot(l1, l2b.T)))  # propagate hidden -> output
         gb = (model.neg_labels - fb) * alpha  # vector of error gradients multiplied by the learning rate
         if learn_hidden:
-            model.syn1neg[word_indices] += outer(gb, l1)  # learn hidden -> output
+            model.syn1neg[word_indices] += outer(gb, l1)  # learn hidden -> output model weight
         neu1e += dot(gb, l2b)  # save error
 
     if learn_vectors:
