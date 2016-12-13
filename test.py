@@ -61,16 +61,16 @@ def test2():
 
 def test3():
     documents = []
-    s1 = 'this book is good , I like it'.split()
-    s2 = 'this book is bad , I hate it'.split()
-    s3 = 'this room is good , I like it'.split()
-    s4 = 'this room is bad , I hate it'.split()
+    s1 = 'this book is good , and I like it'.split()
+    s2 = 'this book is bad , and I hate it'.split()
+    s3 = 'this room is good , and I like it'.split()
+    s4 = 'this room is bad , and I hate it'.split()
     documents.append(TaggedDocument(s1, ['1']))
     documents.append(TaggedDocument(s2, ['0']))
     documents.append(TaggedDocument(s3, ['1']))
     documents.append(TaggedDocument(s4, ['0']))
     # model =Doc2Vec(documents, dm=0, size=100, window=3, negative=5, hs=1, sample=1e-4, iter=100, min_count=1, workers=1)
-    model = Doc2Vec(documents, dm=1, dm_concat=1, size=50, window=3, negative=5, hs=0, sample=1e-3, iter=100, min_count=0, workers=1)
+    model = Doc2Vec(documents, dm=1, dm_concat=1, size=50, window=3, negative=5, hs=1, sample=1e-3, iter=100, min_count=0, workers=1)
     # model = Doc2Vec(documents, dm=0, dbow_words=1, size=50, window=3, negative=1, hs=1, iter=10, min_count=0, workers=1)
     print('%s:\n %s' % (model, model.docvecs.most_similar('1')))
     # print model.docvecs['1']
@@ -90,10 +90,10 @@ def test3():
 
 def test4():
     documents = []
-    documents.append(('this book is good , I like it'.split()))
-    documents.append(('this book is bad , I hate it'.split()))
-    documents.append(('this room is good , I like it'.split()))
-    documents.append(('this room is bad , I hate it'.split()))
+    documents.append(('this book is good , and I like it'.split()))
+    documents.append(('this book is bad , and I hate it'.split()))
+    documents.append(('this room is good , and I like it'.split()))
+    documents.append(('this room is bad , and I hate it'.split()))
     model = Word2Vec(documents, size=50, window=3, negative=5, hs=0, sample=1e-3, iter=100, min_count=0, workers=1)
     # model =Doc2Vec(documents, dm=0, size=100, window=3, negative=5, hs=1, sample=1e-4, iter=100, min_count=1, workers=1)
     # model = Doc2Vec(documents, dm=1, dm_concat=1, size=50, window=3, negative=5, hs=1, sample=1e-3, iter=10, min_count=0, workers=1)
