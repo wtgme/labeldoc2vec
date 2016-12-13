@@ -109,7 +109,13 @@ def draw_words_ano(vectors, words, alternate=True, arrows=True, title=''):
     colors = cm.rainbow(np.linspace(0, 1, nCols))
 
     first = True # color alternation to divide given groups
-
+    plt.rcParams['axes.labelsize'] = 15
+    plt.rcParams['xtick.labelsize'] = 15
+    plt.rcParams['ytick.labelsize'] = 15
+    plt.rcParams['legend.fontsize'] = 20
+    plt.rcParams['lines.markersize'] = 10
+    plt.rcParams['pdf.fonttype'] = 42
+    plt.rcParams['ps.fonttype'] = 42
     for point, word in zip(vectors2d, words):
         # plot points
         plt.scatter(point[0], point[1], c=colors[word_list.index(word)])
