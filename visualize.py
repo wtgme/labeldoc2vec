@@ -30,6 +30,7 @@ def draw_words(vectors, words, alternate=True, arrows=True, title=''):
     # vectors2d = tsne.fit_transform(dis)
 
     tsne = TSNE(n_components=2, init='pca', random_state=0)
+    np.set_printoptions(suppress=True)
     vectors2d = tsne.fit_transform(vectors)
     word_list = list(set(words))
     nCols = len(word_list)
@@ -80,7 +81,7 @@ def draw_words(vectors, words, alternate=True, arrows=True, title=''):
     # if title:
     #     plt.title(title)
 
-    plt.savefig(title+'.pdf', bbox_extra_artists=(lgd,), bbox_inches='tight')
+    plt.savefig(title+'.pdf', bbox_extra_artists=(lgd,), bbox_inches='tight', rasterized = True)
     plt.clf()
 
 '''# get trained model
@@ -103,6 +104,7 @@ def draw_words_ano(vectors, words, alternate=True, arrows=True, title=''):
     # vectors2d = tsne.fit_transform(dis)
 
     tsne = TSNE(n_components=2, init='pca', random_state=0)
+    np.set_printoptions(suppress=True)
     vectors2d = tsne.fit_transform(vectors)
     word_list = list(set(words))
     nCols = len(word_list)
