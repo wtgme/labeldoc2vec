@@ -72,22 +72,22 @@ def class_vect(alldocs):
     cores = multiprocessing.cpu_count()
     simple_models = [
                 # PV-DM w/concatenation - window=5 (both sides) approximates paper's 10-word total window size
-                Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, workers=cores),
                 # PV-DBOW
-                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, workers=cores),
                 # PV-DBOW Learing words
-                Doc2Vec(documents, dm=0, dbow_words=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                # Doc2Vec(documents, dm=0, dbow_words=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, workers=cores),
                 # PV-DM w/average
-                Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, workers=cores),
 
-                 # PV-DM w/concatenation - window=5 (both sides) approximates paper's 10-word total window size
-                Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
-                # PV-DBOW
-                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
-                # PV-DBOW Learing words
-                Doc2Vec(documents, dm=0, dbow_words=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
-                # PV-DM w/average
-                Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                #  # PV-DM w/concatenation - window=5 (both sides) approximates paper's 10-word total window size
+                # Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, workers=cores),
+                # # PV-DBOW
+                # Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, workers=cores),
+                # # PV-DBOW Learing words
+                # Doc2Vec(documents, dm=0, dbow_words=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, workers=cores),
+                # # PV-DM w/average
+                # Doc2Vec(documents, dm=1, dm_mean=1, size=size, window=window, negative=5, hs=0, sample=1e-3, iter=iter, workers=cores),
 
                     ]
 
@@ -99,7 +99,7 @@ def class_vect(alldocs):
         print name
         train_targets, train_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs])
         test_targets, test_regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in test_docs])
-        data_util.logit(train_regressors, train_targets, test_regressors, test_targets)
+        data_util.svm_class(train_regressors, train_targets, test_regressors, test_targets)
         data_util.model_similar(model, train_regressors, train_targets, test_regressors, test_targets)
 
 

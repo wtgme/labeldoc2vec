@@ -11,7 +11,7 @@ from sklearn import metrics
 import numpy as np
 from sklearn import svm
 from collections import namedtuple
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 import re
 import sys
 import unicodedata
@@ -70,7 +70,6 @@ def svm_class(X_train, y_train, X_test, y_test):
     # y_tlin = svc_lin.predict(X_train)
     # print "SVM Performance"
     # print_scores(y_tlin, y_train, y_lin, y_test)
-    print "Train: %dx%d. Test: %dx%d" %( tuple( X_train.shape + X_test.shape ) )
     model = svm.LinearSVC(penalty='l1', dual=False)
     model.fit( X_train, y_train )
     pred_train_classes = model.predict( X_train )
@@ -165,6 +164,98 @@ def get_imdb_data():
     return alldocs
 
 
+def ng_data():
+    from sklearn.datasets import fetch_20newsgroups
+    # remove = ('headers', 'footers', 'quotes')
+    data_train = fetch_20newsgroups(subset='train')
+    data_test = fetch_20newsgroups(subset='test')
+    y_train, y_test = data_train.target, data_test.target # Label ID from 0 to 19
+    names = data_train.target_names
+    docs_dict = {}
+
+    for line_no, line in enumerate(data_train.data):
+        words = extract_words(line)
+        label = y_train[line_no]  # [12.5K pos, 12.5K neg]*2 then unknown
+        docs = docs_dict.get(label, [])
+        docs.append(words)
+        docs_dict[label] = docs
+
+    for key in docs_dict:
+        print '---------------%s------------------' %key
+        docs = docs_dict[key]
+        print 'numbers of documents: %d' %len(docs)
+        avenum = np.mean([len(doc) for doc in docs])
+        print 'average number of words in doc: %.3f' % avenum
+        uniqword = [w for w in doc for doc in docs]
+        print 'Number of word: %d' %len(uniqword)
+        print 'Number of unique words: %d' %len(set(uniqword))
+        print 'Average number of frequences of word: %.3f' %(len(uniqword)/len(set(uniqword)))
+
+
+def remove_duplic(data):
+    from collections import Counter
+    names = []
+    for name in data.filenames:
+        names.append(name.split('/')[-1])
+    dup_docs = [item for item, count in Counter(names).iteritems() if count > 1]
+
+    datal, filenamesl, targetl = [], [], []
+    for ids, name in enumerate(names):
+        if name not in dup_docs:
+            datal.append(data.data[ids])
+            filenamesl.append(data.filenames[ids])
+            targetl.append(data.target[ids])
+    data.data = datal
+    data.filenames = filenamesl
+    data.target = targetl
+    return data
+
+def get_ohsumed_dat(filespath):
+    import sklearn.datasets as data_loader
+    train = data_loader.load_files(filespath+'/training/')
+    test = data_loader.load_files(filespath+'/test/')
+    print len(train.data)
+    print len(test.data)
+
+    train = remove_duplic(train)
+    test = remove_duplic(test)
+    print len(train.data)
+    print len(test.data)
+
+    Target = True
+    for i in xrange(len(train.target_names)):
+        if train.target_names[i] != test.target_names[i]:
+            Target = False
+            print '-------------------------------------'
+            break
+    if Target:
+        import copy
+        all = copy.deepcopy(train)
+        all.data = np.concatenate((train.data, test.data))
+        all.filenames = np.concatenate((train.filenames, test.filenames))
+        all.target = np.concatenate((train.target, test.target))
+        print len(all.data)
+        print len(train.data)
+        print len(test.data)
+
+        from collections import Counter
+        names = []
+        all = remove_duplic(all)
+        for name in all.filenames:
+            names.append(name.split('/')[-1])
+        dup_docs = [item for item, count in Counter(names).iteritems() if count > 1]
+        print len(dup_docs)
+        print len(set(dup_docs))
+        names = np.array(names)
+        for item in dup_docs:
+            docs = all.filenames[np.where(names==item)]
+            print docs
+            # print docs[0].split('/')[-3]
+            sets = set([sn.split('/')[-3] for sn in docs])
+            if len(sets) > 2:
+                print docs
+
+
 def get_ng_data():
     # try:
     #     alldocs = pickle.load(open('20ng.data', 'r'))
@@ -254,7 +345,7 @@ def sim_ratio(vectors, labels):
     size = len(vectors)
     sim_inter, sim_intra, count_inter, count_intra = 0.0, 0.0, 0.0, 0.0
     for i in xrange(size):
-        for j in xrange(i, size):
+        for j in xrange(i+1, size):
             if labels[i] == labels[j]:
                 sim_intra += sims[i][j]
                 count_intra += 1
@@ -264,9 +355,10 @@ def sim_ratio(vectors, labels):
     sim_inter_avg = sim_inter/count_inter
     sim_intra_avg = sim_intra/count_intra
     ratio = sim_intra_avg/sim_inter_avg
-    print 'Intra_similarity: %.3f \t Inter_simiarlty: %.3f \t Ratio: %.3f' %(sim_intra_avg, sim_inter_avg, ratio)
+    print 'Intra_similarity: %.3f, \t Inter_simiarlty: %.3f, \t Ratio: %.3f' %(sim_intra_avg, sim_inter_avg, ratio)
 
 
-
-
+if __name__ == '__main__':
+    # ng_data()
+    get_ohsumed_dat('/home/wt/grive/baselines/topicvec-master/ohsumed/')
 

@@ -16,6 +16,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 # from scipy.spatial import distance
 
+# plt.rcParams['axes.labelsize'] = 15
+# plt.rcParams['xtick.labelsize'] = 15
+# plt.rcParams['ytick.labelsize'] = 15
+# plt.rcParams['legend.fontsize'] = 20
+# plt.rcParams['lines.markersize'] = 10
+plt.rcParams['pdf.fonttype'] = 42
+plt.rcParams['ps.fonttype'] = 42
 
 def draw_words(vectors, words, alternate=True, arrows=True, title=''):
     # sims = cosine_similarity(vectors)
@@ -33,6 +40,8 @@ def draw_words(vectors, words, alternate=True, arrows=True, title=''):
     np.set_printoptions(suppress=True)
     vectors2d = tsne.fit_transform(vectors)
     word_list = list(set(words))
+    word_list.sort()
+    print word_list
     nCols = len(word_list)
     colors = cm.rainbow(np.linspace(0, 1, nCols))
 
@@ -111,13 +120,6 @@ def draw_words_ano(vectors, words, alternate=True, arrows=True, title=''):
     colors = cm.rainbow(np.linspace(0, 1, nCols))
 
     first = True # color alternation to divide given groups
-    plt.rcParams['axes.labelsize'] = 15
-    plt.rcParams['xtick.labelsize'] = 15
-    plt.rcParams['ytick.labelsize'] = 15
-    plt.rcParams['legend.fontsize'] = 20
-    plt.rcParams['lines.markersize'] = 10
-    plt.rcParams['pdf.fonttype'] = 42
-    plt.rcParams['ps.fonttype'] = 42
     for point, word in zip(vectors2d, words):
         # plot points
         plt.scatter(point[0], point[1], c=colors[word_list.index(word)])
