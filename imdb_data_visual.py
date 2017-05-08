@@ -59,8 +59,8 @@ def class_vect(alldocs):
     cores = multiprocessing.cpu_count()
     simple_models = [
                 # PV-DBOW
-                Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
-                # Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores)
+                # Doc2Vec(documents, dm=0, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores),
+                Doc2Vec(documents, dm=1, dm_concat=1, size=size, window=window, negative=5, hs=1, sample=1e-3, iter=iter, min_count=1, workers=cores)
                     ]
 
     models_by_name = OrderedDict((str(model), model) for model in simple_models)
@@ -68,7 +68,7 @@ def class_vect(alldocs):
     for name, model in models_by_name.items():
         print name
         targets, regressors = zip(*[(doc.label, model.infer_vector(doc.words)) for doc in train_docs])
-        # visualize.draw_words(regressors, targets, True, False, r'Class2VecNG')
+        visualize.draw_words(regressors, targets, True, False, r'Class2VecNG-dc')
         data_util.sim_ratio(regressors, targets)
 
 

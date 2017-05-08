@@ -15,6 +15,8 @@ from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 import re
 import sys
 import unicodedata
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
 unicode_punc_tbl = dict.fromkeys( i for i in xrange(128, sys.maxunicode)
                       if unicodedata.category(unichr(i)).startswith('P') )
 
@@ -165,7 +167,6 @@ def get_imdb_data():
 
 
 def ng_data():
-    from sklearn.datasets import fetch_20newsgroups
     # remove = ('headers', 'footers', 'quotes')
     data_train = fetch_20newsgroups(subset='train')
     data_test = fetch_20newsgroups(subset='test')
@@ -212,7 +213,7 @@ def remove_duplic(data):
 
 def get_ohsumed_dat(filespath):
     import sklearn.datasets as data_loader
-    train = data_loader.load_files(filespath+'/training/')
+    train = data_loader.load_files(filespath+'/train/')
     test = data_loader.load_files(filespath+'/test/')
     print len(train.data)
     print len(test.data)
@@ -221,6 +222,8 @@ def get_ohsumed_dat(filespath):
     test = remove_duplic(test)
     print len(train.data)
     print len(test.data)
+    print train.target_names
+    print test.target_names
 
     Target = True
     for i in xrange(len(train.target_names)):
@@ -273,7 +276,7 @@ def get_ng_data():
             words = extract_words(line)
             tags = [line_no]  # `tags = [tokens[0]]` would also work at extra memory cost
             split = 'train'
-            label = names[y_train[line_no]]  # [12.5K pos, 12.5K neg]*2 then unknown
+            l= names[y_train[line_no]]  # [12.5K pos, 12.5K neg]*2 then unknown
             alldocs.append(LabelDocument(words, tags, split, label))
     train_len = len(data_train.data)
     for line_no, line in enumerate(data_test.data):
@@ -358,7 +361,30 @@ def sim_ratio(vectors, labels):
     print 'Intra_similarity: %.3f, \t Inter_simiarlty: %.3f, \t Ratio: %.3f' %(sim_intra_avg, sim_inter_avg, ratio)
 
 
+def test_ng():
+    # categories = ['alt.atheism', 'talk.religion.misc', 'comp.graphics', 'sci.space']
+    newsgroups_train = fetch_20newsgroups(subset='train', remove=('headers', 'footers', 'quotes'))
+    vectorizer = TfidfVectorizer()
+    vectors = vectorizer.fit_transform(newsgroups_train.data)
+    newsgroups_test = fetch_20newsgroups(subset='test', remove=('headers', 'footers', 'quotes'))
+    vectors_test = vectorizer.transform(newsgroups_test.data)
+
+    # from sklearn.naive_bayes import MultinomialNB
+    # clf = MultinomialNB(alpha=.01)
+    # clf.fit(vectors, newsgroups_train.target)
+    # pred = clf.predict(vectors_test)
+    print vectors.shape
+    print vectors_test.shape
+
+    model = svm.LinearSVC(penalty='l1', dual=False)
+    model.fit(vectors, newsgroups_train.target)
+    pred = model.predict(vectors_test)
+    print metrics.f1_score(newsgroups_test.target, pred, average='macro')
+
+
+
 if __name__ == '__main__':
     # ng_data()
-    get_ohsumed_dat('/home/wt/grive/baselines/topicvec-master/ohsumed/')
+    # get_ohsumed_dat('/home/wt/Code/wordvect/topicvec-master/aclImdb/')
+    test_ng()
 
